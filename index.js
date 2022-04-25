@@ -37,10 +37,23 @@ app.get('/api/persons/:id', (req, res) => {
 
   if (!person) {
     res.status(404).end()
+    return
   }
 
   res.json(person);
 })
+
+app.delete('/api/persons/:id', (req, res) => {
+  const id = Number(req.params.id)
+  const person = persons.find(person => person.id === id);
+  const filterperson = persons.filter(person => person.id !== id)
+  if (!person) {
+    res.status(404).end()
+    return
+  }
+  res.send(filterperson).status(204).end()
+})
+
 
 app.get('/info', (req, res) => {
   res.send(`<p>Phonebook has info for ${persons.length} people </p> ${currentdate}`)
