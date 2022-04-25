@@ -1,6 +1,11 @@
 const express = require('express')
 const app = express()
 
+const bodyParser = require('body-parser')
+4
+const jsonParser = bodyParser.json()
+app.use(jsonParser);
+
 const persons = [
   {
     "id": 1,
