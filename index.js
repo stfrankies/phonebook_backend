@@ -7,7 +7,9 @@ const bodyParser = require('body-parser')
 const jsonParser = bodyParser.json()
 app.use(jsonParser);
 
-app.use(morgan('tiny'));
+morgan.token('body', (req, res) => JSON.stringify(req.body))
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
 const persons = [
   {
