@@ -1,10 +1,13 @@
 const express = require('express')
 const app = express()
 
+const morgan = require('morgan')
 const bodyParser = require('body-parser')
 
 const jsonParser = bodyParser.json()
 app.use(jsonParser);
+
+app.use(morgan('tiny'));
 
 const persons = [
   {
