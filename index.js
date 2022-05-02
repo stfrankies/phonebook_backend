@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 
 const bodyParser = require('body-parser')
-4
+
 const jsonParser = bodyParser.json()
 app.use(jsonParser);
 
@@ -55,6 +55,18 @@ app.post('/api/persons', (req, res) => {
     id: Math.random(),
     name: req.body.name,
     number: req.body.number
+  }
+
+  const checkname = persons.filter(person => new RegExp(`^${req.body.name}$`, "i").test(person.name));
+
+  if (person.name === undefined || person.number === undefined) {
+    res.status(400).json({ error: 'bad request - missing entry value' }).end()
+    return
+  }
+
+  if (checkname.length > 0) {
+    res.status(400).json({ error: 'name already exists' }).end()
+    return
   }
 
   const newpersons = persons.concat(person)
