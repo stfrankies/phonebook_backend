@@ -58,13 +58,6 @@ app.get('/api/persons/:id', (req, res) => {
   res.json(person);
 })
 
-app.post('/api/persons', (req, res) => {
-  const id = Number(req.params.id);
-  persons.filter(person => person.id !== id);
-
-  response.status(204).end();
-});
-
 app.post('/api/persons', (req, res) =>{
   if(req.body.name === undefined){
     console.log('missing name value');
