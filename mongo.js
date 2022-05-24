@@ -11,9 +11,13 @@ const name = process.argv[3];
 
 const phone = process.argv[4];
 
-const url = `mongodb+srv://stfrankies:${password}@appcluster.lccjq.mongodb.net/?retryWrites=true&w=majority`;
+const url = `mongodb+srv://stfrankies:${password}@appcluster.lccjq.mongodb.net/myFirstDatabase?authSource=admin&replicaSet=atlas-b6yk1p-shard-0&w=majority&readPreference=primary&retryWrites=true&ssl=true`;
 
-mongoose.connect(url);
+
+mongoose.connect(url, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(()=>console.log('Connected')).catch(e=>console.log(e))
 
 const personSchema = new mongoose.Schema({
   name: String,
@@ -46,7 +50,7 @@ function addPerson() {
     person.save().then(result => {
       console.log(`added ${result.name} number ${result.phone} to phonebook!`);
       mongoose.connection.close();
-    });
+    }).catch(e=>console.log(e));
   } catch (error) {
     console.log(error);
   }
