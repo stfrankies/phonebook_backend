@@ -59,28 +59,46 @@ app.get('/api/persons/:id', (req, res) => {
 })
 
 app.post('/api/persons', (req, res) => {
-  console.log(req.body)
+  const id = Number(req.params.id);
+  persons.filter(person => person.id !== id);
 
-  const person = {
-    id: Math.random(),
-    name: req.body.name,
-    number: req.body.number
+  response.status(204).end();
+});
+
+app.post('/api/persons', (req, res) =>{
+  if(req.body.name === undefined){
+    console.log('missing name value');
+    res.status(400).json({error: 'missing name value'});
+    return; 
   }
+  const body = req.body
 
-  const checkname = persons.filter(person => new RegExp(`^${req.body.name}$`, "i").test(person.name));
-
-  if (person.name === undefined || person.number === undefined) {
-    res.status(400).json({ error: 'bad request - missing entry value' }).end()
-    return
+  const person = new Person({
+    name: body.name,
+    phone: body.phone
+  })
+  try {
+    person.save().then(savedPerson => {
+      res.json(savedPerson);
+    })
+  } catch (error) {
+    console.log(error.message)
   }
+  // const checkname = persons.filter(person => new RegExp(`^${req.body.name}$`, "i").test(person.name));
 
-  if (checkname.length > 0) {
-    res.status(400).json({ error: 'name already exists' }).end()
-    return
-  }
+  // if(checkname.length > 0){
+  //   res.status(400).json({error:'name already exists'});
+  //   return;
+  // }
 
-  const newpersons = persons.concat(person)
-  res.json(newpersons)
+  // const person = {
+  //   id: Math.random(),
+  //   name: req.body.name,
+  //   number: req.body.number
+  // };
+  
+  // const newpersons = persons.concat(person);
+  // res.json(newpersons);
 })
 
 
