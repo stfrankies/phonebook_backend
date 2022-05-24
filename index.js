@@ -4,6 +4,8 @@ const cors = require('cors')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
 
+const Person = require('./models/person')
+
 const jsonParser = bodyParser.json()
 app.use(jsonParser);
 app.use(cors())
@@ -41,7 +43,7 @@ const currentdate = new Date();
 
 
 app.get('/api/persons', (req, res) => {
-  res.json(persons)
+  Person.find({}).then(persons => {res.json(persons)})
 })
 
 app.get('/api/persons/:id', (req, res) => {
