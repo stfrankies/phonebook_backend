@@ -5,6 +5,7 @@ const morgan = require('morgan')
 const bodyParser = require('body-parser')
 
 const Person = require('./models/person')
+const { response } = require('express')
 
 const jsonParser = bodyParser.json()
 app.use(jsonParser);
@@ -51,7 +52,6 @@ const errorHandler = (error, req, res, next) =>{
 app.use(errorHandler);
 
 const currentdate = new Date();
-
 
 app.get('/api/persons', (req, res) => {
   Person.find({}).then(persons => {res.json(persons)})
@@ -105,6 +105,20 @@ app.post('/api/persons', (req, res) =>{
   // res.json(newpersons);
 })
 
+app.put('/api/persons/:id', (req, res)=>{
+  const body = req.body
+
+  const person = {
+    name: body.name,
+    number: body.number
+  }
+
+  Person.findByIdAndUpdate(req.params.id, person, {new: true}).then(
+    personUpdate => {
+      response.json(personUpdate)
+    }
+  ).catch(error =>errorHandler(error, req, res, next))
+}) 
 
 app.delete('/api/persons/:id', (req, res) => {
   //const id = Number(req.params.id)
