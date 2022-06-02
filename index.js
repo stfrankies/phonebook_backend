@@ -39,6 +39,17 @@ const persons = [
   }
 ]
 
+const errorHandler = (error, req, res, next) =>{
+  console.error(error.Message)
+  
+  if(error.name === 'CastError'){
+    return response.status(4)
+  }
+  next(error)
+}
+
+app.use(errorHandler);
+
 const currentdate = new Date();
 
 
