@@ -55,18 +55,22 @@ const currentdate = new Date();
 
 app.get('/api/persons', (req, res) => {
   Person.find({}).then(persons => {res.json(persons)})
+  .catch(err => console.log(err))
 })
 
 app.get('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-  const person = persons.find(person => person.id === id);
 
-  if (!person) {
-    res.status(404).end()
-    return
-  }
+  Person.findById(req.params.id).then(person => res.json(person))
+  .catch(err => console.log(err))
+  // const id = Number(req.params.id)
+  // const person = persons.find(person => person.id === id);
 
-  res.json(person);
+  // if (!person) {
+  //   res.status(404).end()
+  //   return
+  // }
+
+  // res.json(person);
 })
 
 app.post('/api/persons', (req, res) =>{
