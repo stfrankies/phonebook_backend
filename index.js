@@ -68,7 +68,7 @@ app.post('/api/persons', (req, res) =>{
 
   const person = new Person({
     name: body.name,
-    phone: body.phone
+    number: body.number
   })
   try {
     person.save().then(savedPerson => {
@@ -96,14 +96,21 @@ app.post('/api/persons', (req, res) =>{
 
 
 app.delete('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-  const person = persons.find(person => person.id === id);
-  const filterperson = persons.filter(person => person.id !== id)
-  if (!person) {
-    res.status(404).end()
-    return
-  }
-  res.send(filterperson).status(204).end()
+  //const id = Number(req.params.id)
+  // const person = persons.find(person => person.id === id);
+  // const filterperson = persons.filter(person => person.id !== id)
+
+  Person.findByIdAndRemove(req.params.id).then(result => {
+    if(result === null){
+      res.status(404).end()
+    }
+    res.status(204).end()
+  }).catch(err => console.log(err))
+  // if (!person) {
+  //   res.status(404).end()
+  //   return
+  // }
+  // res.send(filterperson).status(204).end()
 })
 
 
