@@ -13,6 +13,7 @@ app.use(cors())
 app.use(express.static('build'))
 
 
+// eslint-disable-next-line no-unused-vars
 morgan.token('body', (req, res) => JSON.stringify(req.body))
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
@@ -55,13 +56,13 @@ const currentdate = new Date();
 
 app.get('/api/persons', (req, res) => {
   Person.find({}).then(persons => {res.json(persons)})
-  .catch(err => console.log(err))
+    .catch(err => console.log(err))
 })
 
 app.get('/api/persons/:id', (req, res) => {
 
   Person.findById(req.params.id).then(person => res.json(person))
-  .catch(err => console.log(err))
+    .catch(err => console.log(err))
   // const id = Number(req.params.id)
   // const person = persons.find(person => person.id === id);
 
@@ -82,8 +83,8 @@ app.post('/api/persons', (req, res) =>{
   })
   
   person.save().then(savedPerson => {
-      res.json(savedPerson);
-    }).catch(error => {
+    res.json(savedPerson);
+  }).catch(error => {
     console.log(error.message)
     if(error.name === 'ValidationError'){
       res.status(400).json(error)
@@ -136,8 +137,8 @@ app.delete('/api/persons/:id', (req, res) => {
 
   Person.findByIdAndRemove(req.params.id).then(result => {
     if(result === null){
-        res.status(404).json({message: 'Item not found in db'})
-      }
+      res.status(404).json({message: 'Item not found in db'})
+    }
     res.status(204).end()
   }).catch(err => console.log(err))
   // if (!person) {
@@ -152,6 +153,7 @@ app.get('/info', (req, res) => {
   res.send(`<p>Phonebook has info for ${persons.length} people </p> ${currentdate}`)
 })
 
+// eslint-disable-next-line no-undef
 const PORT = process.env.PORT || 3001;
 app.listen(PORT)
 console.log(`Server running on port ${PORT}`)
