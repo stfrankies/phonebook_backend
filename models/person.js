@@ -13,12 +13,28 @@ mongoose.connect(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
-    .then(res => console.log('connect to DB on ', res.connections[0].port))
+    .then(res => console.log('connected to DB on ', res.connections[0].port))
     .catch(err => console.log(err.message));
 
 personSchema = new mongoose.Schema({
-    name: String,
-    number: String
+    name: {
+      type: String,
+      required: true,
+      minlength: [3, "Name must be more than 3 letters"]
+    },
+    number: {
+      type: String,
+      minlength: [8, 'Phone numbers must be more than 8 digits'],
+      validate: {
+        validator: function(value) {
+          if(value.includes('-')){
+            return /^\d{2}-\d{7}$/.test(value) || /^\d{3}-\d{8}$/.test(value);
+          }
+          return (value.length >= 8);
+        },
+        message: props => `${props.value} is not a valid phone number!`
+      }
+    }
 })
 
 module.exports = mongoose.model('Person', personSchema)

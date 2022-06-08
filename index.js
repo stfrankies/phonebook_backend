@@ -74,24 +74,21 @@ app.get('/api/persons/:id', (req, res) => {
 })
 
 app.post('/api/persons', (req, res) =>{
-  if(req.body.name === undefined){
-    console.log('missing name value');
-    res.status(400).json({error: 'missing name value'});
-    return; 
-  }
   const body = req.body
 
   const person = new Person({
     name: body.name,
     number: body.number
   })
-  try {
-    person.save().then(savedPerson => {
+  
+  person.save().then(savedPerson => {
       res.json(savedPerson);
-    })
-  } catch (error) {
+    }).catch(error => {
     console.log(error.message)
-  }
+    if(error.name === 'ValidationError'){
+      res.status(400).json(error)
+    }
+  })
   // const checkname = persons.filter(person => new RegExp(`^${req.body.name}$`, "i").test(person.name));
 
   // if(checkname.length > 0){
@@ -109,19 +106,27 @@ app.post('/api/persons', (req, res) =>{
   // res.json(newpersons);
 })
 
-app.put('/api/persons/:id', (req, res)=>{
-  const body = req.body
-
+app.put('/api/persons/:id', errorHandler, (req, res)=>{
+  const body = req.body 
   const person = {
     name: body.name,
     number: body.number
   }
 
-  Person.findByIdAndUpdate(req.params.id, person, {new: true}).then(
+  Person.findOneAndUpdate({_id: req.params.id}, person, {new: true, runValidators: true}).then(
     personUpdate => {
-      response.json(personUpdate)
+      if(personUpdate === null){
+        res.status(404).json({message: 'Item not found in db'})
+      }
+      console.log(personUpdate)
+      res.status(201).json(personUpdate)
     }
-  ).catch(error =>errorHandler(error, req, res, next))
+  ).catch(error =>{
+    console.log(error.message)
+    if(error.name === 'ValidationError'){
+      res.status(400).json(error)
+    }
+  })
 }) 
 
 app.delete('/api/persons/:id', (req, res) => {
@@ -131,8 +136,8 @@ app.delete('/api/persons/:id', (req, res) => {
 
   Person.findByIdAndRemove(req.params.id).then(result => {
     if(result === null){
-      res.status(404).end()
-    }
+        res.status(404).json({message: 'Item not found in db'})
+      }
     res.status(204).end()
   }).catch(err => console.log(err))
   // if (!person) {
